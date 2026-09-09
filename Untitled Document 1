@@ -1,1 +1,0 @@
-python -c "from bench.ingest import connect; c=connect(); [print(r[0], r[1]) for r in c.execute('SELECT model, COUNT(*) FROM embeddings GROUP BY model')]"
