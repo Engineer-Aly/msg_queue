@@ -1,1 +1,4 @@
-python -c "import sqlite3,datetime as d; c=sqlite3.connect('file:grades.sqlite?mode=ro',uri=True); r=[x[0] for x in c.execute('select distinct graded_at from grades order by graded_at')]; t=[d.datetime.fromisoformat(x) for x in r]; print('batches:',len(t)); [print(f'  batch {i+1}: {(t[i+1]-t[i]).total_seconds():.0f}s') for i in range(len(t)-1)]"
+$start = Get-Date
+echo "Reply with OK" | gemini -p "" --output-format json
+$end = Get-Date
+"ELAPSED: $(($end - $start).TotalSeconds) seconds"
