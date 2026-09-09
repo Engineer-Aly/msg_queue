@@ -1,13 +1,1 @@
-python -c "import json,pathlib; src=pathlib.Path('bench/bench_data/merged_questions.json'); q=json.loads(src.read_text('utf8')); k=[r for r in q if r['qid'] not in ('a023','a043')]; pathlib.Path('questions.json').write_text(json.dumps(k,indent=2,ensure_ascii=False)+chr(10),'utf8'); print(len(q),'->',len(k))"
-
-Should print 124 -> 122.
-
-Then the run
-
-python -m bench.questions --questions questions.json
-python -m bench.retrieve --questions questions.json
-::  carry pairs_blind.json to the judge machine
-python -m bench.judge.run_judge
-::  carry grades.sqlite back
-python -m bench.metrics --grades grades.sqlite
-
+python -c "import sqlite3,datetime as d; c=sqlite3.connect('file:grades.sqlite?mode=ro',uri=True); r=[x[0] for x in c.execute('select distinct graded_at from grades order by graded_at')]; t=[d.datetime.fromisoformat(x) for x in r]; print('batches:',len(t)); [print(f'  batch {i+1}: {(t[i+1]-t[i]).total_seconds():.0f}s') for i in range(len(t)-1)]"
