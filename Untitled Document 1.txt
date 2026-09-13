@@ -1,4 +1,1 @@
-$start = Get-Date
-echo "Reply with OK" | gemini -p "" --output-format json
-$end = Get-Date
-"ELAPSED: $(($end - $start).TotalSeconds) seconds"
+python -c "import sqlite3; c=sqlite3.connect('file:grades.sqlite?mode=ro',uri=True); [print(m,n) for m,n in c.execute('select model,count(*) from grades group by model')]"
