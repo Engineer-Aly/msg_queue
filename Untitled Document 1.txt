@@ -1,14 +1,1 @@
-python -c @"
-import time
-from bench import config, rerank
-t = time.perf_counter()
-engine = rerank.load_reranker('bge-m3')
-print(f'loaded in {time.perf_counter()-t:.1f}s')
-print(rerank.model_identity('bge-m3'))
-pairs = [('What is the maximum brake pedal travel?', 'x ' * 400)] * 8
-t = time.perf_counter()
-engine.score(pairs)
-dt = time.perf_counter() - t
-rate = len(pairs) / dt
-print(f'{rate:.2f} pairs/sec -> {5191/rate/60:.0f} min for the full pass')
-"@
+python -c "import json; print([r['reranker'] for r in json.load(open(r'bench\bench_data\rerank_stats.json'))])"
