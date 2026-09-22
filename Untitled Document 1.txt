@@ -1,1 +1,9 @@
-python -c "import json; print([r['reranker'] for r in json.load(open(r'bench\bench_data\rerank_stats.json'))])"
+python -c @"
+from bench import config
+from sentence_transformers import SentenceTransformer
+p = r'C:\Users\agadelra\Desktop\try_to_benchmark\model\embeddinggemma__fix_mining_v1_lora'
+m = SentenceTransformer(p, device='cpu')
+print('max_seq_length:', m.max_seq_length)
+print('modules:', [type(x).__name__ for x in m])
+print('dim:', m.encode(['task: search result | query: brake pedal travel']).shape)
+"@
