@@ -1,6 +1,4 @@
-import json, sqlite3
-pairs = json.load(open(r".\bench_data\pairs_blind.json", encoding="utf8"))
-done = {r[0] for r in sqlite3.connect(r".\bench_data\grades.sqlite")
-        .execute("SELECT pair_id FROM grades WHERE model=?", ("gemini-2.5-flash",))}
-print(len(pairs), "pairs,", len(done), "graded,",
-      sum(p["pair_id"] not in done for p in pairs), "new")
+copy bench\bench_data\grades.sqlite bench\bench_data\grades.backup.sqlite
+cd bench\judge
+python run_judge.py ..\bench_data\pairs_blind.json --out ..\bench_data\grades.sqlite --selfcheck-only 30
+
