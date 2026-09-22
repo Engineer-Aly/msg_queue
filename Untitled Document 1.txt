@@ -1,9 +1,6 @@
-python -c @"
-from bench import config
-from sentence_transformers import SentenceTransformer
-p = r'C:\Users\agadelra\Desktop\try_to_benchmark\model\embeddinggemma__fix_mining_v1_lora'
-m = SentenceTransformer(p, device='cpu')
-print('max_seq_length:', m.max_seq_length)
-print('modules:', [type(x).__name__ for x in m])
-print('dim:', m.encode(['task: search result | query: brake pedal travel']).shape)
-"@
+import json, sqlite3
+pairs = json.load(open(r".\bench_data\pairs_blind.json", encoding="utf8"))
+done = {r[0] for r in sqlite3.connect(r".\bench_data\grades.sqlite")
+        .execute("SELECT pair_id FROM grades WHERE model=?", ("gemini-2.5-flash",))}
+print(len(pairs), "pairs,", len(done), "graded,",
+      sum(p["pair_id"] not in done for p in pairs), "new")
