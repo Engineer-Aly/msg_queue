@@ -1,4 +1,4 @@
-copy bench\bench_data\grades.sqlite bench\bench_data\grades.backup.sqlite
-cd bench\judge
-python run_judge.py ..\bench_data\pairs_blind.json --out ..\bench_data\grades.sqlite --selfcheck-only 30
-
+mkdir $env:TEMP\npmtest; cd $env:TEMP\npmtest
+npm init -y
+npm install onnxruntime-node@1.30.0
+node -e "require('onnxruntime-node'); console.log('ok')"
