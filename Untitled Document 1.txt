@@ -1,4 +1,1 @@
-mkdir $env:TEMP\npmtest; cd $env:TEMP\npmtest
-npm init -y
-npm install onnxruntime-node@1.30.0
-node -e "require('onnxruntime-node'); console.log('ok')"
+cd ~; Remove-Item -Recurse -Force $env:TEMP\npmtest
