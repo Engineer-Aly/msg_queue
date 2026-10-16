@@ -1,1 +1,12 @@
-{ "mode": "shadow", "models": { "C3": { "endpoint": "http://127.0.0.1:8082", "adapter": "stepguard", "id": "stepguard", "timeoutMs": 20000 } } }
+{
+  "mode": "enforce",
+  "logPath": "~/.gemini/toolguard/guard-log.jsonl",
+  "watchdogMs": 50000,
+  "checks": { "c4b": true, "c2": true, "c1": true, "actionRisk": true },
+  "allowExtraTools": [],
+  "models": {
+    "C3":  { "endpoint": "http://127.0.0.1:8082", "adapter": "stepguard",  "id": "stepguard",  "timeoutMs": 20000 },
+    "C1":  { "endpoint": "http://127.0.0.1:8081", "adapter": "toolace",    "id": "toolace",    "timeoutMs": 20000 },
+    "C4a": { "endpoint": "http://127.0.0.1:8083", "adapter": "qwen3guard", "id": "qwen3guard", "timeoutMs": 20000 }
+  }
+}
