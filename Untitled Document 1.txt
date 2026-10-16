@@ -1,1 +1,15 @@
-https://github.com/Engineer-Aly/tool-call-guard
+"hooks": {
+  "BeforeTool": [
+    {
+      "matcher": "*",
+      "hooks": [
+        {
+          "name": "probe-before",
+          "type": "command",
+          "command": "node C:/Users/x/Desktop/complete_BM/tool-call-guard/probe/gemini-cli-hook/probe-hook.mjs inspect",
+          "timeout": 15000
+        }
+      ]
+    }
+  ]
+}
