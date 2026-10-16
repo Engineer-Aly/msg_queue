@@ -1,1 +1,4 @@
-node scripts/models/download.ts --only stepguard-4b,toolace-2-8b,qwen3guard-4b --dest C:\models
+mkdir C:\models\toolace-2-8b, C:\models\stepguard-4b, C:\models\qwen3guard-4b
+move C:\models\ToolACE-2-8B.Q4_K_M.gguf      C:\models\toolace-2-8b\
+move C:\models\stepguard-rl-4b.Q4_K_M.gguf   C:\models\stepguard-4b\
+move C:\models\Qwen3Guard-Gen-4B.Q4_K_M.gguf C:\models\qwen3guard-4b\
