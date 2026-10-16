@@ -1,3 +1,1 @@
-node packages/hook/serve.ts --gguf C:\Users\a\Desktop\driver\models\stepguard-4b\stepguard-rl-4b.Q4_K_M.gguf   --port 8082 --bin <llama.cpp dir>
-node packages/hook/serve.ts --gguf C:\Users\a\Desktop\driver\models\toolace-2-8b\ToolACE-2-8B.Q4_K_M.gguf      --port 8081 --bin <llama.cpp dir>
-node packages/hook/serve.ts --gguf C:\Users\a\Desktop\driver\models\qwen3guard-4b\Qwen3Guard-Gen-4B.Q4_K_M.gguf --port 8083 --bin <llama.cpp dir>
+{ "mode": "shadow", "models": { "C3": { "endpoint": "http://127.0.0.1:8082", "adapter": "stepguard", "id": "stepguard", "timeoutMs": 20000 } } }
