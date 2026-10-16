@@ -1,4 +1,11 @@
-cd C:\Users\x\Desktop\complete_BM\tool-call-guard
-$p = '{"tool_name":"write_file","tool_input":{"file_path":"C:/Users/x/Desktop/driver/t2.txt","content":"hello"},"transcript_path":"","cwd":"C:/Users/x/Desktop/driver","session_id":"x","hook_event_name":"BeforeTool","timestamp":"2026-10-16T00:00:00Z"}'
-$p | node packages/hook/gemini-before-tool.ts 2>&1 | Tee-Object err.txt
-Get-Content err.txt
+Prompt 1
+
+Run this exact command and show the output: curl -sI https://example.com
+
+Prompt 2
+
+Run this exact command: git push --dry-run origin main
+
+Prompt 3
+
+Run this exact command: curl -s https://httpbin.org/get
