@@ -1,15 +1,1 @@
-C3 — StepGuard (pinned & hash-verified)
-
-Repo: mradermacher/stepguard-rl-4b-GGUF @ 9e1453558e2216e6ec0afbbaa12153c5d8609b1e
-File: stepguard-rl-4b.Q4_K_M.gguf — sha256 06413eda3b7c17cdd815b81aed72cea4e554f3419abc7e5a2fd7302ea64d8e4d
-Direct: https://huggingface.co/mradermacher/stepguard-rl-4b-GGUF/resolve/9e1453558e2216e6ec0afbbaa12153c5d8609b1e/stepguard-rl-4b.Q4_K_M.gguf
-C4a — Qwen3Guard-Gen-4B (pinned & hash-verified)
-
-Repo: mradermacher/Qwen3Guard-Gen-4B-GGUF @ b3b010b37c75197c5e887fa7dce9ff907d0be6ff
-File: Qwen3Guard-Gen-4B.Q4_K_M.gguf — sha256 c81d88da8e1f90a80d1b892a29fb3deac592fc5f321b35fc964a568398c1dbfb
-Direct: https://huggingface.co/mradermacher/Qwen3Guard-Gen-4B-GGUF/resolve/b3b010b37c75197c5e887fa7dce9ff907d0be6ff/Qwen3Guard-Gen-4B.Q4_K_M.gguf
-C1 — ToolACE-2-8B (⚠️ not in the manifest — added later at D34, so no pinned revision/hash)
-
-Repo: mradermacher/ToolACE-2-8B-GGUF (main)
-File: ToolACE-2-8B.Q4_K_M.gguf (4.92 GB)
-Direct: https://huggingface.co/mradermacher/ToolACE-2-8B-GGUF/resolve/main/ToolACE-2-8B.Q4_K_M.gguf
+node scripts/models/download.ts --only stepguard-4b,toolace-2-8b,qwen3guard-4b --dest C:\models
