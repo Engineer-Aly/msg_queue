@@ -1,15 +1,32 @@
-"hooks": {
-  "BeforeTool": [
-    {
-      "matcher": "*",
-      "hooks": [
-        {
-          "name": "probe-before",
-          "type": "command",
-          "command": "node C:/Users/x/Desktop/complete_BM/tool-call-guard/probe/gemini-cli-hook/probe-hook.mjs inspect",
-          "timeout": 15000
-        }
-      ]
-    }
-  ]
-}
+You are helping me reverse-engineer the data SCHEMA of two files produced by a Gemini CLI
+"BeforeTool" hook. I need STRUCTURE ONLY — key names, value types, and shapes — NOT the actual
+contents. This is from a corporate machine, so you MUST redact every concrete value.
+
+REDACTION RULES (strict):
+- Replace every string value with a type placeholder: "<string>", "<path>", "<iso-timestamp>",
+  "<uuid>", etc. Never reproduce real file paths, code, command text, tool arguments, env values,
+  usernames, hostnames, or any content.
+- The ONLY literal values you may keep are: hook_event_name values, tool_name values, boolean/number
+  values, JSON key names, and file extensions. Everything else becomes a placeholder.
+
+FILE 1 — probe-log.jsonl (one JSON object per line):
+1. List every distinct TOP-LEVEL key that appears across all lines, with each key's value type.
+2. Report the distinct values seen for "hook_event_name" and for "tool_name" (these are safe to keep).
+3. The field "raw_stdin_preview" contains the raw JSON payload the host passed to the hook. Parse it
+   and give me its full key structure as a schema (keys + types, nested), fully redacted. I especially
+   need to know: is there a key holding the tool's arguments/input? What is it called and what shape?
+4. Report the value FORMAT of "transcript_path": its file extension and whether it's an absolute path
+   (do NOT print the real path — just e.g. "<abs-path>.jsonl").
+
+FILE 2 — the transcript file at transcript_path (if provided):
+5. Is it JSON or JSONL (one record per line)?
+6. Give the schema of a record: keys + types, redacted. What distinct record "types"/roles exist?
+7. Specifically: how is a TOOL CALL represented (which keys hold the tool name and its arguments), and
+   how is the tool's RESULT/OUTPUT represented and linked to its call? Redact all actual values.
+
+OUTPUT FORMAT:
+- A section per file.
+- Use compact JSON-ish schema notation, e.g. { "ts": "<iso-timestamp>", "tool_name": "run_shell_command",
+  "payload_keys": ["<string>", ...] }.
+- Then one fully-redacted example skeleton per file.
+- End with a one-line note on anything unusual (extra keys, missing keys, empty fields).
