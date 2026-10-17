@@ -1,11 +1,8 @@
-Prompt 1
+# confirm you're on 24.x first (no nvm dance needed on Windows)
+node -v        # should print v24.11.1
 
-Run this exact command and show the output: curl -sI https://example.com
+# 1. logic tests (no server)
+node --test packages/hook/test/vet.test.ts packages/guard/test/windowed-escalate.test.ts
 
-Prompt 2
-
-Run this exact command: git push --dry-run origin main
-
-Prompt 3
-
-Run this exact command: curl -s https://httpbin.org/get
+# 2. live 256k demo (stepguard llama-server must be up at :8082)
+node scripts/windowing-demo.ts --endpoint http://127.0.0.1:8082 --chars 262144
