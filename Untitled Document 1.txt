@@ -1,6 +1,1 @@
-node --test packages/hook/test/vet.test.ts packages/guard/test/windowed-escalate.test.ts
-
-node scripts/windowing-demo.ts --endpoint http://127.0.0.1:8082 --chars 262144 --benign-call
-
-
-Read ./bigtest.md in full and carry out every setup step it lists, in order.
+node scripts/windowing-demo-all.ts --check all
