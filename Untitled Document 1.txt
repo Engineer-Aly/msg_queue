@@ -1,8 +1,6 @@
-# confirm you're on 24.x first (no nvm dance needed on Windows)
-node -v        # should print v24.11.1
-
-# 1. logic tests (no server)
 node --test packages/hook/test/vet.test.ts packages/guard/test/windowed-escalate.test.ts
 
-# 2. live 256k demo (stepguard llama-server must be up at :8082)
-node scripts/windowing-demo.ts --endpoint http://127.0.0.1:8082 --chars 262144
+node scripts/windowing-demo.ts --endpoint http://127.0.0.1:8082 --chars 262144 --benign-call
+
+
+Read ./bigtest.md in full and carry out every setup step it lists, in order.
