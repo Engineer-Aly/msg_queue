@@ -1,8 +1,18 @@
-Update REPORT.md (via bench/REPORT.template.md, bench/thinking_section.md and bench/build_report.py) with these corrections:
+
+▎ 1. Section 5, Gemma thinking: use Gemini-only numbers for thinking off vs on:
+▎    - summary facts 51%→57%, comment facts 61%→63%
+▎    - good summaries 3/20→4/20, good comments 7/20 vs 7/20 usable
 ▎
-▎ 1. Add a grader calibration section with the bench/calib.py table. Explain that the work-laptop grader (Gemini 2.5) scored the same batch1 answers much higher than the home grader (Claude Opus 5.5 — not "Claude 3.5 Sonnet"; fix every mention): gpt-oss-20b-low comments good 8→17/20, summaries good 8→17/20, summary false claims 10→1.
-▎ 2. Compare reasoning effects only within one grader. Under Gemini: gpt-oss summaries 85% low vs 85% medium (no gain), comments 85% good vs 95% usable (small, within noise). Remove "medium reasoning fixes free text decisively". Keep the automatically scored gains (bug finding 75→88, code generation 80→95, quiz 90→95, code review 90→95).
-▎ 3. Section 1 routing table: comments go back to "Draft only, human review" and summaries back to "Keep on Gemini / rough draft". Add the note that the free-text pass rate depends strongly on how strict the grader is (40% strict vs 85% lenient for the same answers).
-▎ 4. Speed comparisons: don't compare across machines. Label every timing with its machine (GTX 1060 or RTX A1000), rename section 4, and remove the "1.3–2× latency" and "~10× faster than Saluki" claims, or rerun gpt-oss-20b low on the A1000 so the comparison is like for like.
-▎ 5. Section 10: Saluki also leads on the retrieval judge (98 vs 97, a tie within the margin), not only on code review.
-▎ 6. Rebuild REPORT.md. Don't commit the bench/judge/calib folder.
+▎    Conclude "no measurable free-text gain; code generation drops 85%→70%". Remove the 38→51 and 43→61 comparisons.
+▎ 2. Sections 3 and 5 tables: mark every comment/summary cell graded by Gemini 2.5 (gpt-oss-20b medium; Gemma 4 + thinking) with "†" and add the footnote "† graded by Gemini 2.5 on the work laptop; it scores ~2× higher than the Opus 5.5 grader on identical answers (section 8)". Add the same note to "How to read the free-text rows".
+▎ 3. Section 8: replace "Claude Opus 5.5 was hyper-strict…" with a neutral description of both graders' rules, noting that the sum-01 example was a correct catch (higher-priority interrupts are not disabled during an ISR). Recommend a human spot-check of about 5 disagreements.
+▎ 4. Section 9:
+▎    - step 1: gpt-oss-20b at medium reasoning for gated code generation and bug-finding first passes;
+▎    - step 4: drop "(if policy allows)", since Chinese models are allowed;
+▎    - add a step: evaluate Qwen3.6-35B-A3B for 256K tool calling (separate study).
+▎ 5. Section 1:
+▎    - bug finding verdict: "First pass at medium; human confirms";
+▎    - headline: add "(under strict grading)" after the Saluki 40% figure.
+▎ 6. Comments gain = 2 items (17→19) everywhere.
+▎
+▎ Rebuild REPORT.md. Don't commit bench/judge/calib.
