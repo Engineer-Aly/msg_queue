@@ -1,1 +1,4 @@
-node scripts/windowing-demo-all.ts --check all
+ Grade bench/judge/batch1/packets_comment.json and bench/judge/batch1/packets_summary.json using exactly the same rules and strictness you used for batch3. Write the results to bench/judge/calib/verdicts_comment_part1.json and bench/judge/calib/verdicts_summary_part1.json, in the same format as your batch3 verdicts. Do NOT open any key_*.json or verdicts_*.json file in bench/judge/batch1. Do not change any other file.
+ 
+ 
+3. Run the comparison: python bench/calib.py
