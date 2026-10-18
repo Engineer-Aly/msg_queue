@@ -1,4 +1,5 @@
-
+▎ Fix REPORT.md (via bench/REPORT.template.md, bench/thinking_section.md, bench/build_report.py):
+▎
 ▎ 1. Section 5, Gemma thinking: use Gemini-only numbers for thinking off vs on:
 ▎    - summary facts 51%→57%, comment facts 61%→63%
 ▎    - good summaries 3/20→4/20, good comments 7/20 vs 7/20 usable
@@ -16,3 +17,4 @@
 ▎ 6. Comments gain = 2 items (17→19) everywhere.
 ▎
 ▎ Rebuild REPORT.md. Don't commit bench/judge/calib.
+
