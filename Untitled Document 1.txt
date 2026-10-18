@@ -1,20 +1,132 @@
-▎ Fix REPORT.md (via bench/REPORT.template.md, bench/thinking_section.md, bench/build_report.py):
-▎
-▎ 1. Section 5, Gemma thinking: use Gemini-only numbers for thinking off vs on:
-▎    - summary facts 51%→57%, comment facts 61%→63%
-▎    - good summaries 3/20→4/20, good comments 7/20 vs 7/20 usable
-▎
-▎    Conclude "no measurable free-text gain; code generation drops 85%→70%". Remove the 38→51 and 43→61 comparisons.
-▎ 2. Sections 3 and 5 tables: mark every comment/summary cell graded by Gemini 2.5 (gpt-oss-20b medium; Gemma 4 + thinking) with "†" and add the footnote "† graded by Gemini 2.5 on the work laptop; it scores ~2× higher than the Opus 5.5 grader on identical answers (section 8)". Add the same note to "How to read the free-text rows".
-▎ 3. Section 8: replace "Claude Opus 5.5 was hyper-strict…" with a neutral description of both graders' rules, noting that the sum-01 example was a correct catch (higher-priority interrupts are not disabled during an ISR). Recommend a human spot-check of about 5 disagreements.
-▎ 4. Section 9:
-▎    - step 1: gpt-oss-20b at medium reasoning for gated code generation and bug-finding first passes;
-▎    - step 4: drop "(if policy allows)", since Chinese models are allowed;
-▎    - add a step: evaluate Qwen3.6-35B-A3B for 256K tool calling (separate study).
-▎ 5. Section 1:
-▎    - bug finding verdict: "First pass at medium; human confirms";
-▎    - headline: add "(under strict grading)" after the Saluki 40% figure.
-▎ 6. Comments gain = 2 items (17→19) everywhere.
-▎
-▎ Rebuild REPORT.md. Don't commit bench/judge/calib.
+#!/usr/bin/env python3
+"""Export the work-laptop results that are needed at home into one narrow text file to photograph.
 
+Collects, for the given configs (default: gptoss-20b-medium and gemma4-e4b-think):
+  1. speed per task (median generation / prompt tok/s)
+  2. code generation pass/fail per item
+  3. LLM-grader verdicts per item (facts covered / total, false claims) from every judge/<batch>/ that has them
+  4. the comment and summary answers (the text only, no reasoning)
+Lines are at most --width characters (72) and a page marker comes every --page lines (50): one photo per page.
+Stdlib only; works on Windows.
+
+Usage: python export_for_photo.py [--configs a,b] [--tasks comment,summary] [--width 72] [--page 50] [--out photo_export.txt]
+"""
+import argparse, glob, json, os, re, statistics, textwrap
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+WIDTH, PAGE = 72, 50
+
+
+def jl(path):
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding="utf-8") as f:
+        return [json.loads(l) for l in f if l.strip()]
+
+
+def wrap(text, indent=""):
+    out = []
+    for line in text.splitlines():
+        line = line.rstrip()
+        if not line:
+            continue
+        out += textwrap.wrap(line, WIDTH, initial_indent=indent, subsequent_indent=indent + "  ",
+                             break_long_words=True, break_on_hyphens=False) or [indent]
+    return out
+
+
+def squeeze(text):
+    """Drop the Doxygen frame (/**, */, leading ' * ') and blank lines; keep the words."""
+    lines = []
+    for l in (text or "").splitlines():
+        s = l.strip()
+        if s in ("/**", "*/", "*", "/*!", "**/"):
+            continue
+        s = re.sub(r"\s+", " ", re.sub(r"^\*+\s?", "", s))  # also drop column alignment
+        if not s:
+            continue
+        # reflow: a line continues the previous one unless it starts a tag or a list item
+        if lines and not re.match(r"[@\\\-•]|\d+[.)]\s", s):
+            lines[-1] += " " + s
+        else:
+            lines.append(s)
+    return "\n".join(lines)
+
+
+def speed(cfg, tasks):
+    out = []
+    for t in tasks:
+        ok = [r for r in jl(os.path.join(HERE, "results", cfg, f"{t}.jsonl")) if r.get("status") == "ok"]
+        if ok:
+            g = statistics.median(r.get("gen_tps", 0) for r in ok)
+            p = statistics.median(r.get("prompt_tps", 0) for r in ok)
+            s = statistics.median(r.get("latency_s", 0) for r in ok)
+            out.append(f"{t:9} n{len(ok):<3} gen {g:5.1f} pp {p:6.0f} s {s:5.1f}")
+    return out
+
+
+def codegen(cfg):
+    g = jl(os.path.join(HERE, "results", cfg, "graded_codegen.jsonl"))
+    cells = [f"{r['id'][-2:]}{'P' if r.get('pass') else 'F' + (r.get('stage') or '?')[:1]}" for r in g]
+    return wrap(" ".join(cells)) if cells else ["(no graded_codegen.jsonl)"]
+
+
+def verdicts(cfg, task):
+    """Per-item 'covered/total xfalse' for cfg from every judge batch whose key maps a label to cfg."""
+    out = []
+    for bdir in sorted(glob.glob(os.path.join(HERE, "judge", "*"))):
+        kp = os.path.join(bdir, f"key_{task}.json")
+        if not os.path.exists(kp):
+            continue
+        key = json.load(open(kp, encoding="utf-8"))
+        cells = []
+        for vp in sorted(glob.glob(os.path.join(bdir, f"verdicts_{task}_part*.json"))):
+            v = json.load(open(vp, encoding="utf-8"))
+            for iid, labels in v.items():
+                for lab, x in labels.items():
+                    if key.get(iid, {}).get(lab) == cfg and isinstance(x, dict):
+                        cells.append(f"{iid[-2:]}:{x.get('covered')}/{x.get('total')}x{x.get('false_claims')}")
+        if cells:
+            out.append(f"[{os.path.basename(bdir)}]")
+            out += wrap(" ".join(sorted(cells)))
+    return out or ["(no verdicts found)"]
+
+
+def main():
+    global WIDTH, PAGE
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--configs", default="gptoss-20b-medium,gemma4-e4b-think")
+    ap.add_argument("--tasks", default="comment,summary")
+    ap.add_argument("--out", default=os.path.join(HERE, "photo_export.txt"))
+    ap.add_argument("--width", type=int, default=WIDTH)
+    ap.add_argument("--page", type=int, default=PAGE)
+    a = ap.parse_args()
+    WIDTH, PAGE = a.width, a.page
+    cfgs, tasks = a.configs.split(","), a.tasks.split(",")
+    all_tasks = ["ragjudge", "mcq", "codecheck", "bugfind", "codegen", "comment", "summary"]
+    lines = ["EXPORT  " + "  ".join(f"C{i + 1}={c}" for i, c in enumerate(cfgs))]
+    for i, c in enumerate(cfgs):
+        tag = f"C{i + 1}"
+        lines += ["", f"## {tag} SPEED (median)"] + speed(c, all_tasks)
+        lines += ["", f"## {tag} CODEGEN (P pass, Fc compile, Fr run)"] + codegen(c)
+        for t in tasks:
+            lines += ["", f"## {tag} VERDICTS {t} (id:covered/total x false)"] + verdicts(c, t)
+    for t in tasks:
+        for i, c in enumerate(cfgs):
+            recs = {r["id"]: r for r in jl(os.path.join(HERE, "results", c, f"{t}.jsonl")) if r.get("status") == "ok"}
+            lines += ["", f"######## {t.upper()} C{i + 1} ({len(recs)} answers)"]
+            for iid in sorted(recs):
+                lines.append(f"-- {iid} C{i + 1}")
+                lines += wrap(squeeze(recs[iid].get("content")))
+    pages = (len(lines) + PAGE - 1) // PAGE
+    out = []
+    for p in range(pages):
+        out.append(f"=========== page {p + 1}/{pages} ===========")
+        out += lines[p * PAGE:(p + 1) * PAGE]
+    with open(a.out, "w", encoding="utf-8") as f:
+        f.write("\n".join(out) + "\n")
+    print(f"wrote {a.out}: {len(lines)} lines, {pages} pages of {PAGE} lines")
+
+
+if __name__ == "__main__":
+    main()
